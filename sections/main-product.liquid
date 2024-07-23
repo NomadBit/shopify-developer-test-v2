@@ -408,6 +408,59 @@
                   </button>
                 </quantity-input>
               </div>
+              {% comment %}Testing code for total price box{% endcomment %} 
+              <div>
+                <span>Your Total: </span><span id="total-price">{{ product.price | money }}</span>
+              </div>
+              {% comment %}Testing code for total price box{% endcomment %}
+                {% comment %}Script changing total price values{% endcomment %}
+                <script>
+                  $(document).ready(function() {
+                    //Get the initial price of product in cents
+                    var productPrice = {{ product.price }};
+                    console.log("Initial product price in cents:", productPrice);
+
+                    //Function to format the price
+                    function formatMoney(cents) {
+                      return (cents / 100).toFixed(2);
+                    }
+
+                    //Function to update the total price
+                    function updateTotalPrice() {
+                      var quantity = $('#Quantity-{{ section.id  }}').val();
+                      console.log("Current quantity:", quantity);
+                      var totalPrice = productPrice * quantity;
+                      console.log("Calculated total price in cents:", totalPrice);
+                      $('#total-price').text('$' + formatMoney(totalPrice));
+                    }
+
+                    //Event listener for decrement
+                    $('button[name="minus"]').on('click', function() {
+                      var quantityInput = $('#Quantity-{{ section.id }}');
+                      var currentQuantity = parseInt(quantityInput.val());
+                      if (currentQuantity > 1) {
+                        quantityInput.val(currentQuantity - 1).trigger('input');
+                      }
+                    });
+
+                    //Event listener for increment
+                    $('button[name="plus"]').on('click', function() {
+                      var quantityInput = $('#Quantity-{{ section.id }}');
+                      var currentQuantity = parseInt(quantityInput.val());
+                      quantityInput.val(currentQuantity + 1).trigger('input');
+                    });
+
+                    //Event listener for typing quantity input
+                    $('#Quantity-{{ section.id  }}').on('input', function() {
+                      updateTotalPrice();
+                    });
+
+                    // Initialize total price
+                    updateTotalPrice();
+                  });
+                </script>
+                {% comment %}Script changing total price values{% endcomment %}
+                
             {%- when 'popup' -%}
               <modal-opener
                 class="product-popup-modal__opener no-js-hidden quick-add-hidden"
@@ -481,6 +534,13 @@
                       <fieldset class="js product-form__input">
                         <legend class="form__label">{{ option.name }}</legend>
                         {%- for value in option.values -%}
+                          {% comment %} my addition for vartiant image list {% endcomment %}
+                          {% assign variant_image = '' %}
+                          {% for variant in product.variants %}
+                            {% if variant.option1 == value %}
+                              {% assign variant_image = variant.featured_image | img_url: '100x100' %}
+                            {% endif %}
+                          {% endfor %}
                           <input
                             type="radio"
                             id="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}"
@@ -492,7 +552,7 @@
                             {% endif %}
                           >
                           <label for="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}">
-                            {{ value }}
+                            <img src="{{ variant_image }}" alt="{{ value }}" />
                           </label>
                         {%- endfor -%}
                       </fieldset>

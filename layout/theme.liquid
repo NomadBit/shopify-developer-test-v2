@@ -1,7 +1,8 @@
 <!doctype html>
 <html class="no-js" lang="{{ request.locale.iso_code }}">
-  TEST TEXT
   <head>
+    <!-- added jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -215,6 +216,24 @@
           font-size: 1.6rem;
         }
       }
+
+      .product-form__input {
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      .product-form__input label {
+        margin-right: 10px;
+        cursor: pointer;
+      }
+
+      .product-form__input img {
+        width: 50px;
+        height: 50px;
+        border: 1px solid #ddd;
+        padding: 2px;
+      }
+
     {% endstyle %}
 
     {{ 'base.css' | asset_url | stylesheet_tag }}
